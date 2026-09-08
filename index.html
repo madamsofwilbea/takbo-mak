@@ -129,7 +129,7 @@
 // older browsers: fall back if roundRect isn't available
 if (!CanvasRenderingContext2D.prototype.roundRect){ CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r){ r = Math.min(r, w / 2, h / 2); this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r); this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath(); return this; }; }
 // ---------------- settings ----------------
-const LEADERBOARD_URL = "PASTE_LEADERBOARD_SCRIPT_URL_HERE";   // same leaderboard-Code.gs; scores tagged "runner"
+const LEADERBOARD_URL = "https://script.google.com/macros/s/AKfycbx75n2xJD-y-tJzjfYITTS-B0lVtDBDlas2mqrEhpxONZxgMjZlyvRDTPVs1tN1-SkJ/exec";   // same leaderboard-Code.gs; scores tagged "runner"
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} } };
 function esc(x){ return String(x).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
 
