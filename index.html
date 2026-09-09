@@ -65,6 +65,8 @@
   .qrtabs button.on{background:var(--gold);color:var(--deep)}
   .qr{width:min(240px,70vw);margin:6px auto 4px;border-radius:12px;background:#fff;padding:6px;display:block}
   .qrnote{font-size:.8rem;color:rgba(247,244,236,.7)}
+  #pause{position:fixed;top:44px;right:58px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(218,167,90,.6);background:rgba(7,25,15,.7);font-size:.95rem;cursor:pointer;z-index:5;display:none;color:var(--gold-light)}
+  #pause.on{display:block}
 </style>
 </head>
 <body>
@@ -73,6 +75,16 @@
 <div class="flash" id="flash"></div>
 <button id="fire" aria-label="Throw"><span>🥄</span>tirador</button>
 <button id="mute" aria-label="Sound">🔊</button>
+<button id="pause" aria-label="Pause">⏸</button>
+<div class="ui hidden" id="paused">
+  <div class="card">
+    <div class="crest">PAUSED</div>
+    <h1 style="font-size:1.7rem">She'll wait.</h1>
+    <p>Take a breath. Nothing moves until you're back.</p>
+    <div class="btns"><button class="btn" id="resumeBtn">Resume</button><button class="btn small" id="quitBtn">Quit to menu</button></div>
+  </div>
+</div>
+
 
 <div class="ui" id="start">
   <div class="card">
@@ -647,6 +659,20 @@ function init(){
   $('fire').addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); throwSpoon(); });
   window.addEventListener('pointerdown', e => { if (e.target.closest('.card') || e.target.closest('#fire') || e.target.closest('#mute')) return; e.preventDefault(); jump(); });
   window.addEventListener('keydown', e => { if (e.target === $('nameIn')) return; if (e.code === 'Space' || e.code === 'ArrowUp'){ e.preventDefault(); if (!running && !dead) start(); else jump(); } if (e.code === 'KeyX' || e.code === 'ArrowRight'){ e.preventDefault(); throwSpoon(); } });
+
+  // ---------- pause ----------
+  let paused = false;
+  function togglePause(){
+    if (paused){ paused = false; $('paused').classList.add('hidden'); if (AC) AC.resume(); running = true; last = performance.now(); requestAnimationFrame(loop); }
+    else { if (!running) return; paused = true; running = false; $('paused').classList.remove('hidden'); if (AC) AC.suspend(); }
+  }
+  $('pause').addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); togglePause(); });
+  $('resumeBtn').addEventListener('click', togglePause);
+  $('quitBtn').addEventListener('click', () => location.reload());
+  window.addEventListener('keydown', e => { if (e.target === $('nameIn')) return; if (e.code === 'Escape' || e.code === 'KeyP'){ e.preventDefault(); togglePause(); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && running && !paused) togglePause(); });   // auto-pause when the phone locks or you switch apps
+  setInterval(() => $('pause').classList.toggle('on', running || paused), 250);
+
 }
 </script>
 </body>
